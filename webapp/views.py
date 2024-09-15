@@ -23,7 +23,7 @@ def events(request):
 
 
 def gallery(request):
-    return render(request, 'meet_us.html')
+    return render(request, 'gallery.html')
 
 
 def service(request):
@@ -34,6 +34,22 @@ def causes(request):
     return render(request, 'causes.html')
 
 
-def team(request):
-    return render(request, 'team.html')
+def team_sec(request):
+    return render(request, 'team_sec.html')
+
+
+def team_spc(request):
+    return render(request, 'team_spc.html')
+
+
+def donation(request):
+    return render(request, 'donation.html')
+
+
+def error_404(request):
+    return render(request, '404.html')
+
+
+def members(request):
+    return render(request, 'members.html')
 
