@@ -1,8 +1,9 @@
 from django.shortcuts import render,get_object_or_404, redirect
-from django.http import HttpResponse
-from .models import Gallery, Blog, Event, Comment, Registration, EventPass, Executives, Parliamentary
-from .forms import CommentForm, RegistrationForm
+from django.http import HttpResponse, HttpResponseNotFound, JsonResponse
+from .models import Gallery,Subscriber, Blog, Event, Comment, Registration, EventPass, Executives, Parliamentary
+from .forms import CommentForm, RegistrationForm, SubscriberForm
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib import messages
 import random
 import string
 import qrcode
@@ -11,12 +12,23 @@ from io import BytesIO
 from PIL import Image
 
 def home(request):
-    blog = Blog.objects.all().order_by('-id')[:4]
+    blog = Blog.objects.all().order_by('-id')[:8]
     carousel = Blog.objects.all().order_by('-id')[:3]
-    event = Event.objects.all().order_by('-id')[:3]
+    event = Event.objects.all().order_by('-id')[:5]
     gallery = Gallery.objects.all().order_by('-id')[:4]
 
     return render(request, 'index.html', {'blogs': blog, 'carousel': carousel, 'gallery': gallery, 'events':event})
+
+def newsletter_subscribe(request):
+    if request.method == 'POST':
+        form = SubscriberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid email address'})
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
+
 
 def about(request):
     return render(request, 'about.html')
@@ -85,7 +97,7 @@ def event_detail(request, event_id):
             #     return render(request, 'events_full.html', {'event':event})
     else:
         form = RegistrationForm()
-        return render(request, 'event_d.html', {'event':event, 'form':form, 'sponsors':sponsors})
+        return render(request, 'event_d.html', {'event':event, 'form':form, 'sponsors':sponsors, 'event_date': event.date.strftime('%Y-%m-%dT%H:%M:%S'),})
 
 
 def registration_success(request, registration_id):
@@ -151,11 +163,22 @@ def parliamentary(request):
 def donation(request):
     return render(request, 'donation.html')
 
-
-def error_404(request):
-    return render(request, '404.html')
-
+def custom_404_test(request):
+    return HttpResponseNotFound(render(request, '404.html'))
 
 def members(request):
     return render(request, 'members.html')
 
+
+def subscribe(request):
+    if request.method == 'POST':
+        form = SubscriberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request,  'Thank you for subscribing to our newsletter!')
+            return redirect('subscribe')
+        else:
+            messages.error(request, 'Invalid email. Please Try again')
+    else:
+        form = SubscriberForm()
+    return render(request, 'base.html', {'form': form})

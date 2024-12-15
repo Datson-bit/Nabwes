@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import home, about, contact, gallery, blog, events, service, event_detail, registration_success, causes, donation, error_404, test,members, executives,  blog_view, parliamentary
+from .views import home, about, contact, gallery,newsletter_subscribe, blog, events, service, event_detail, registration_success, causes, donation, custom_404_test, test,members, executives,  blog_view, parliamentary
 
 urlpatterns = [
     path('', home, name='home'),
@@ -15,9 +15,10 @@ urlpatterns = [
     path('executives/', executives, name='executives'),
     path('parliamentary/', parliamentary, name='team_spc'),
     path('donation/', donation, name='donation'),
-    path('error_404/', error_404, name='error_404'),
+    path('error_404/', custom_404_test, name='error_404'),
     path('members/', members, name='members'),
     path('blog/<int:pk>/', blog_view, name="view"),
     path('<int:event_id>/', event_detail, name='event_detail'),
-    path('registration-success/<int:registration_id>/', registration_success, name='registration_success')
+    path('registration-success/<int:registration_id>/', registration_success, name='registration_success'),
+    path('subscribe/', newsletter_subscribe, name="newsletter_subscribe")
 ]

@@ -1,4 +1,4 @@
-{% extends "base.html" %} {%load static%} {% block title %} NABWES | Home
+{% extends "base.html" %}  {%load static%} {% block title %} NABWES | Home
 {%endblock %} {% block content %}
 <body>
   <!-- Carousel Start -->
@@ -40,7 +40,7 @@
               <div class="d-flex align-items-center justify-content-center">
                 <a
                   class="btn-hover-bg btn btn-primary text-white py-3 px-5"
-                  href="#"
+                  href="{%url 'blog'%}"
                   >Explore</a
                 >
               </div>
@@ -1014,8 +1014,7 @@
     </div>
   </div>
   <!-- Gallery End -->
-  {% endcomment %}
-
+  {% endcomment %} {% comment %}
   <!-- Volunteers Start -->
   <div class="container-fluid volunteer py-5 mt-5">
     <div class="container py-5">
@@ -1114,5 +1113,6 @@
     </div>
   </div>
   <!-- Volunteers End -->
+  {% endcomment %}
 </body>
 {% endblock%}

@@ -1,4 +1,17 @@
 {%extends 'base.html'%} {%block content%}
+<style>
+  #countdown {
+      text-align: center;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+  }
+  #timer {
+      font-size: 2rem;
+      color: #F8B864;
+  }
+</style>
 
 <div class="container my-5">
   <br><br><br> 
@@ -27,8 +40,13 @@
       <div class="alert alert-danger mt-3">This event is fully booked!</div>
       {% endif %}
 
-     
-    </div>
+     <!-- Countdown Timer -->
+    <div id="countdown" class="mt-4">
+      <h3>Time Left:</h3>
+      <p id="timer" class="display-5">Loading...</p>
+  </div>
+</div>
+
     <!-- Sponsors Section -->
     <div class="mt-5">
       <h3>Sponsors</h3>
@@ -92,6 +110,32 @@
           }, intervalTime);
       }
   });
+  document.addEventListener('DOMContentLoaded', function () {
+    const eventDate = new Date("{{ event_date }}").getTime(); // Event date and time in JS
+
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const timeLeft = eventDate - now;
+
+        if (timeLeft <= 0) {
+            document.getElementById("timer").textContent = "Event Started!";
+            clearInterval(interval);
+            return;
+        }
+
+        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        document.getElementById("timer").textContent =
+            `${days} Days ${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
+    }
+
+    // Update countdown every 1 second
+    const interval = setInterval(updateCountdown, 1000);
+    updateCountdown(); // Run immediately
+});
 </script>
 
   {%endblock%}

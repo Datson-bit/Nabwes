@@ -1,9 +1,24 @@
 from django.contrib import admin
-from .models import Event,Blog, Gallery, Sponsor,Comment, GalleryImage, Executives, Parliamentary, Registration, EventPass
-
+from .models import Event,Blog, Gallery, Sponsor,Comment,Subscriber, GalleryImage, Executives, Parliamentary, Registration, EventPass
+from import_export.admin import ExportMixin
+from import_export import resources
+from import_export.fields import Field
 
 admin.site.register(Blog)
 admin.site.register(Comment)
+class EventPassResource(resources.ModelResource):
+    # Add fields from related models
+    full_name = resources.Field(attribute='registration__full_name', column_name='Full Name')
+    email = resources.Field(attribute='registration__email', column_name='Email')
+    phone = resources.Field(attribute='registration__phone', column_name='Phone Number')
+    event_title = resources.Field(attribute='registration__event__title', column_name='Event Title')
+    event_date = resources.Field(attribute='registration__event__date', column_name='Event Date')
+    pass_code = resources.Field(attribute='pass_code', column_name='Event Pass Code')
+
+    class Meta:
+        model = EventPass
+        fields = ('full_name', 'email', 'phone', 'event_title', 'event_date', 'pass_code')  # Specify export fields
+        export_order = ('full_name', 'email', 'phone', 'event_title', 'event_date', 'pass_code')  # Order of fields
 
 @admin.register(Executives)
 class ExecutivesAdmin(admin.ModelAdmin):
@@ -38,14 +53,33 @@ class EventAdmin(admin.ModelAdmin):
     inlines = [SponsorInine]
     list_display = ['title', 'date', 'venue', ]
 
-admin.register(Sponsor)
+@admin.register(Sponsor)
 class SponsorAdmin(admin.ModelAdmin):
     list_display = ('name', 'event')
 
+@admin.register(Subscriber)
+class SubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email',)
+
 @admin.register(Registration)
-class RegistrationAdmin(admin.ModelAdmin):
+class RegistrationAdmin(ExportMixin,admin.ModelAdmin):
+    resource_class = EventPassResource
     list_display = ['full_name', 'email', 'event', 'registered_at']
 
 @admin.register(EventPass)
-class EventPassAdmin(admin.ModelAdmin):
-    list_display = ['registration', 'pass_code']
+class EventPassAdmin(ExportMixin, admin.ModelAdmin):
+    resource_class = EventPassResource
+   # Display related fields in the admin list view
+    list_display = ('get_full_name', 'get_event_title', 'pass_code')
+    search_fields = ('registration__full_name', 'registration__email', 'registration__event__title', 'pass_code')
+    list_filter = ('registration__event__title', 'registration__event__date')  # Filter by event details
+
+    # Custom method to display the registrant's full name
+    def get_full_name(self, obj):
+        return obj.registration.full_name
+    get_full_name.short_description = 'Full Name'
+
+    # Custom method to display the event title
+    def get_event_title(self, obj):
+        return obj.registration.event.title
+    get_event_title.short_description = 'Event Title'

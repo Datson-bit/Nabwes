@@ -110,3 +110,10 @@ class Parliamentary(models.Model):
     facebook_link = models.CharField(max_length=2000)
     linkedIn_link = models.CharField(max_length=2000)
     twitter_link = models.CharField(max_length=2000)
+
+class Subscriber(models.Model):
+    email = models.EmailField(unique=True)
+    subscried_at= models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
