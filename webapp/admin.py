@@ -4,6 +4,10 @@ from import_export.admin import ExportMixin
 from import_export import resources
 from import_export.fields import Field
 
+
+admin.site.site_header = "Nabwes Admin Dashboard"
+admin.site.site_title = "Nabwes Admin Portal"
+
 admin.site.register(Blog)
 admin.site.register(Comment)
 class EventPassResource(resources.ModelResource):
