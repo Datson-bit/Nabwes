@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from import_export.formats.base_formats import XLSX
 from decouple import config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,16 +83,17 @@ WSGI_APPLICATION = 'nabwes.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'default': dj_database_url.config(
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),  # Or the IP/hostname of your PostgreSQL server
-        'PORT': config('DB_PORT'),       # Default PostgreSQL port
-    }
+        default= 'postgresql://nabwes_postgresql_user:mUUpYVkkmzLj2EVnZwKZdIHxRWUNceQK@dpg-ctg0303gbbvc73dhq4dg-a.oregon-postgres.render.com/nabwes_postgresql',
+        conn_max_age=600,  # Adjust the connection max age for performance
+        # dbnmae=  config('DB_NAME'),
+        # user= config('DB_USER'),
+        # password = config('DB_PASSWORD'),
+        # host=  config('DB_HOST'),  # Or the IP/hostname of your PostgreSQL server
+        # port = config('DB_PORT'),       # Default PostgreSQL port
+    )
 }
 
 
