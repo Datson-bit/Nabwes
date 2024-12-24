@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.contrib import messages
 import random
 import string
+
 import qrcode
 import base64
 from io import BytesIO
